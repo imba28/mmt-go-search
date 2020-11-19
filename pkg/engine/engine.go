@@ -19,12 +19,24 @@ var (
 // LoadResults - sends requests to different search backends and aggregates the result.
 func LoadResults(query string) []Result {
 	var results []Result
+	backends := []search{
+		webSearch,
+		imageSearch,
+		videoSearch,
+		newsSearch,
+		shoppingSearch,
+	}
+	c := make(chan []Result)
 
-	results = append(results, webSearch(query)...)
-	results = append(results, imageSearch(query)...)
-	results = append(results, videoSearch(query)...)
-	results = append(results, newsSearch(query)...)
-	results = append(results, shoppingSearch(query)...)
+	for i := 0; i < len(backends); i++ {
+		go func(backend search) {
+			c <- backend(query)
+		}(backends[i])
+	}
+
+	for i := 0; i < len(backends); i++ {
+		results = append(results, <-c...)
+	}
 
 	return results
 }
