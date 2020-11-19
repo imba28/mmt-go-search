@@ -1,5 +1,10 @@
 package engine
 
+import (
+	"log"
+	"time"
+)
+
 // Result ... represents a search result
 type Result struct {
 	Type        string
@@ -34,8 +39,15 @@ func LoadResults(query string) []Result {
 		}(backends[i])
 	}
 
+	timeout := time.After(300 * time.Millisecond)
 	for i := 0; i < len(backends); i++ {
-		results = append(results, <-c...)
+		select {
+		case r := <-c:
+			results = append(results, r...)
+		case <-timeout:
+			log.Println("search timeout! Skipping results")
+		}
+
 	}
 
 	return results
