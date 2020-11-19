@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"mmt/go-search/pkg/engine"
@@ -34,6 +35,7 @@ func resultsPageHandler() http.HandlerFunc {
 		if err := t.Execute(w, model); err != nil {
 			log.Println("Could not execute search template!")
 		}
+		log.Println(fmt.Sprintf("%d results, took %v", len(searchResults), timeElapsed))
 	}
 }
 

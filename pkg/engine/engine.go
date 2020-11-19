@@ -21,6 +21,17 @@ var (
 	shoppingSearch = fakeSearch("Shopping")
 )
 
+func firstResult(query string, replicas ...search) []Result {
+	c := make(chan []Result)
+	for i := range replicas {
+		go func(i int) {
+			c <- replicas[i](query)
+		}(i)
+	}
+
+	return <-c
+}
+
 // LoadResults - sends requests to different search backends and aggregates the result.
 func LoadResults(query string) []Result {
 	var results []Result
@@ -35,7 +46,7 @@ func LoadResults(query string) []Result {
 
 	for i := 0; i < len(backends); i++ {
 		go func(backend search) {
-			c <- backend(query)
+			c <- firstResult(query, backend, backend, backend)
 		}(backends[i])
 	}
 
@@ -45,7 +56,8 @@ func LoadResults(query string) []Result {
 		case r := <-c:
 			results = append(results, r...)
 		case <-timeout:
-			log.Println("search timeout! Skipping results")
+			log.Println("search timeout! Skipping results.")
+			return results
 		}
 
 	}
