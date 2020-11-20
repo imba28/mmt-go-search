@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"log"
 	"net"
 	"net/http"
 )
@@ -15,6 +16,7 @@ func Serve(port int) error {
 		return err
 	}
 
+	log.Println("Server is running on http://localhost:8080")
 	return http.Serve(l, mux)
 }
 
