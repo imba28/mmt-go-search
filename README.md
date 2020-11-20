@@ -1,6 +1,21 @@
 # Go search example
 
+## Requirements
+
+either 
+- Docker
+- VSCode and [Remote Container Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
+
+or 
+- [Go 1.15](https://golang.org/dl/)
+
 ## Get started
+
+### VSCode
+
+Open project, enable "Container Extension" and press `F5`.
+
+### Shell
 
 ```
 go mod download
