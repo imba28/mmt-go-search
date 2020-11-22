@@ -20,11 +20,25 @@ var (
 func LoadResults(query string) []Result {
 	var results []Result
 
-	results = append(results, webSearch(query)...)
-	results = append(results, imageSearch(query)...)
-	results = append(results, videoSearch(query)...)
-	results = append(results, newsSearch(query)...)
-	results = append(results, shoppingSearch(query)...)
+	/*
+		todo: fakeSearch(...) calls should be executed concurrently
+		you will need:
+			 - chan []Result
+			 - goroutines
+			 - closure or func
+	*/
+
+	backends := []search{
+		webSearch,
+		imageSearch,
+		videoSearch,
+		newsSearch,
+		shoppingSearch,
+	}
+
+	for i := range backends {
+		results = append(results, backends[i](query)...)
+	}
 
 	return results
 }
