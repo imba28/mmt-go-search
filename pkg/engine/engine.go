@@ -34,6 +34,14 @@ func LoadResults(query string) []Result {
 		}(backends[i])
 	}
 
+	/*
+		todo: add a timeout after 300 ms. Discard any pending results
+
+		you will need:
+		- time package
+		- select
+	*/
+
 	for i := 0; i < len(backends); i++ {
 		results = append(results, <-c...)
 	}
