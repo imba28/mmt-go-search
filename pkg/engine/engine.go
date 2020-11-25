@@ -22,7 +22,7 @@ var (
 )
 
 func firstResult(query string, replicas ...search) []Result {
-	c := make(chan []Result)
+	c := make(chan []Result, len(replicas))
 	for i := range replicas {
 		go func(i int) {
 			c <- replicas[i](query)
@@ -42,7 +42,7 @@ func LoadResults(query string) []Result {
 		newsSearch,
 		shoppingSearch,
 	}
-	c := make(chan []Result)
+	c := make(chan []Result, len(backends))
 
 	for i := 0; i < len(backends); i++ {
 		go func(backend search) {
